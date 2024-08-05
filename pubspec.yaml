@@ -25,13 +25,38 @@ flutter:
   uses-material-design: true
 
 # Add environment setup for CI/CD
-build:
-  commands:
-    - echo "Installing Flutter..."
-    - git clone https://github.com/flutter/flutter.git -b stable --depth 1
-    - export PATH="$PATH:`pwd`/flutter/bin"
-    - flutter doctor
-    - flutter pub get
-    - echo "Building Flutter Web app..."
-    - flutter build web
-    - echo "Build completed!"
+#build:
+#  commands:
+#    - echo "Installing Flutter..."
+#    - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+#    - export PATH="$PATH:`pwd`/flutter/bin"
+#    - flutter doctor
+#    - flutter pub get
+#    - echo "Building Flutter Web app..."
+#    - flutter build web
+#    - echo "Build completed!"
+
+applications:
+  - frontend:
+    phases:
+      preBuild:
+        commands:
+          - echo "Installing Flutter SDK"
+          - git clone https://github.com/flutter/flutter.git -b stable --single-branch
+          - export PATH="$PATH:pwd/flutter/bin"
+          - flutter doctor
+          - flutter pub get
+      build:
+        commands:
+          - flutter build web
+      postBuild:
+        commands:
+          - echo "Build completed"
+    artifacts:
+      baseDirectory: build/web
+      files:
+        - '*/'
+    cache:
+      paths:
+        - 'flutter/.pub-cache/*'
+        - 'build/*'
